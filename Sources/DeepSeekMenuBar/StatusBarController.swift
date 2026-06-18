@@ -18,16 +18,6 @@ class StatusBarController: NSObject {
         setupObservers()
     }
 
-    private func setupStatusItem() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusBarButton = statusItem.button
-
-        updateIcon(normal: true)
-
-        statusBarButton.action = #selector(togglePopover)
-        statusBarButton.target = self
-    }
-
     private func setupObservers() {
         NotificationCenter.default.addObserver(
             self,
@@ -44,22 +34,59 @@ class StatusBarController: NSObject {
         )
     }
 
-    private func updateIcon(normal: Bool) {
-        let imageName = normal ? "brain.head.profile" : "brain.head.profile.fill"
+    private func setupStatusItem() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusBarButton = statusItem.button
 
-        if let image = NSImage(systemSymbolName: imageName, accessibilityDescription: "DeepSeek Menu Bar") {
-            image.isTemplate = true
-            statusBarButton.image = image
-        } else {
-            statusBarButton.title = "DS"
+        setupCustomIcon()
+
+        statusBarButton.action = #selector(togglePopover)
+        statusBarButton.target = self
+    }
+
+    private func setupCustomIcon() {
+        let iconSize = NSSize(width: 18, height: 18)
+        let image = NSImage(size: iconSize)
+        image.lockFocus()
+
+        let rect = NSRect(origin: .zero, size: iconSize)
+        let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
+
+        let gradient = NSGradient(starting: NSColor(red: 0.23, green: 0.51, blue: 0.96, alpha: 1.0),
+                                  ending: NSColor(red: 0.55, green: 0.34, blue: 0.97, alpha: 1.0))
+        gradient?.draw(in: path, angle: 135)
+
+        let text = "D" as NSString
+        let textAttrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.boldSystemFont(ofSize: 11),
+            .foregroundColor: NSColor.white
+        ]
+        let textSize = text.size(withAttributes: textAttrs)
+        let textRect = NSRect(
+            x: (iconSize.width - textSize.width) / 2,
+            y: (iconSize.height - textSize.height) / 2 - 0.5,
+            width: textSize.width,
+            height: textSize.height
+        )
+        text.draw(in: textRect, withAttributes: textAttrs)
+
+        image.unlockFocus()
+        image.isTemplate = false
+
+        statusBarButton.image = image
+    }
+
+    func showPopoverOnLaunch() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+            guard let self = self, let button = self.statusBarButton else { return }
+            self.popoverController.show(relativeTo: button.bounds, of: button)
         }
+    }
+
+    private func updateIcon(normal: Bool) {
+        setupCustomIcon()
 
         if balanceBelowThreshold {
-            if let image = statusBarButton.image {
-                let coloredImage = image.copy() as! NSImage
-                coloredImage.isTemplate = false
-                statusBarButton.image = coloredImage
-            }
             statusBarButton.contentTintColor = .systemYellow
         } else {
             statusBarButton.contentTintColor = nil

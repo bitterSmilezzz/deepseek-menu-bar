@@ -10,5 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         bridgeHandler = BridgeHandler()
         statusBarController = StatusBarController(bridgeHandler: bridgeHandler)
+
+        statusBarController.showPopoverOnLaunch()
     }
 }
