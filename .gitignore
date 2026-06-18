@@ -1,5 +1,8 @@
 node_modules/
 dist/
+.build/
+*.app
+*.app.dSYM
 .DS_Store
 *.log
 .env
