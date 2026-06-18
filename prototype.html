@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DeepSeek Menu Bar - 原型图</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --page-bg: #0a0a0f;
+    --page-title: #fff;
+    --page-subtitle: rgba(255,255,255,0.5);
+    --desktop-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    --desktop-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    --menubar-bg: rgba(30, 30, 40, 0.92);
+    --menubar-color: rgba(255,255,255,0.8);
+    --menubar-border: rgba(255,255,255,0.06);
+    --popover-bg: rgba(28, 28, 38, 0.92);
+    --popover-border: rgba(255,255,255,0.08);
+    --popover-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+    --divider: rgba(255,255,255,0.06);
+    --text-primary: #fff;
+    --text-secondary: rgba(255,255,255,0.85);
+    --text-tertiary: rgba(255,255,255,0.4);
+    --text-muted: rgba(255,255,255,0.25);
+    --card-bg: rgba(255,255,255,0.03);
+    --card-border: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.05);
+    --balance-bg: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+    --balance-border: rgba(59,130,246,0.12);
+    --balance-glow: rgba(59,130,246,0.08);
+    --key-item-bg: rgba(255,255,255,0.03);
+    --key-item-border: rgba(255,255,255,0.04);
+    --key-active-bg: rgba(59,130,246,0.05);
+    --key-active-border: rgba(59,130,246,0.2);
+    --btn-text: rgba(255,255,255,0.4);
+    --btn-hover-bg: rgba(255,255,255,0.06);
+    --btn-hover-text: rgba(255,255,255,0.7);
+    --scene-btn-bg: rgba(255,255,255,0.04);
+    --scene-btn-border: rgba(255,255,255,0.08);
+    --scene-btn-text: rgba(255,255,255,0.4);
+    --scene-btn-hover-bg: rgba(255,255,255,0.08);
+    --scene-btn-hover-text: rgba(255,255,255,0.7);
+    --scene-btn-active-bg: rgba(59,130,246,0.12);
+    --scene-btn-active-border: rgba(59,130,246,0.2);
+    --legend-bg: rgba(255,255,255,0.03);
+    --legend-border: rgba(255,255,255,0.04);
+    --legend-text: rgba(255,255,255,0.35);
+    --window-bg: rgba(0,0,0,0.3);
+    --window-border: rgba(255,255,255,0.06);
+    --window-bar-bg: rgba(0,0,0,0.2);
+    --window-title: rgba(255,255,255,0.2);
+    --window-code: rgba(255,255,255,0.3);
+    --window-cursor: rgba(255,255,255,0.3);
+    --overlay-bg: rgba(0,0,0,0.5);
+  }
+
+  .light {
+    --page-bg: #f5f6fa;
+    --page-title: #1a1a2e;
+    --page-subtitle: rgba(26,26,46,0.4);
+    --desktop-bg: linear-gradient(135deg, #e8ecf5 0%, #d5dceb 50%, #c5cfe0 100%);
+    --desktop-shadow: 0 30px 80px rgba(0,0,0,0.15);
+    --menubar-bg: rgba(245, 246, 250, 0.95);
+    --menubar-color: rgba(26,26,46,0.75);
+    --menubar-border: rgba(0,0,0,0.06);
+    --popover-bg: rgba(255, 255, 255, 0.92);
+    --popover-border: rgba(0,0,0,0.06);
+    --popover-shadow: 0 10px 40px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.04);
+    --divider: rgba(0,0,0,0.06);
+    --text-primary: #1a1a2e;
+    --text-secondary: rgba(26,26,46,0.85);
+    --text-tertiary: rgba(26,26,46,0.5);
+    --text-muted: rgba(26,26,46,0.3);
+    --card-bg: rgba(0,0,0,0.02);
+    --card-border: rgba(0,0,0,0.05);
+    --card-hover: rgba(0,0,0,0.04);
+    --balance-bg: linear-gradient(135deg, rgba(59,130,246,0.06), rgba(139,92,246,0.06));
+    --balance-border: rgba(59,130,246,0.15);
+    --balance-glow: rgba(59,130,246,0.06);
+    --key-item-bg: rgba(0,0,0,0.02);
+    --key-item-border: rgba(0,0,0,0.05);
+    --key-active-bg: rgba(59,130,246,0.04);
+    --key-active-border: rgba(59,130,246,0.2);
+    --btn-text: rgba(26,26,46,0.4);
+    --btn-hover-bg: rgba(0,0,0,0.04);
+    --btn-hover-text: rgba(26,26,46,0.7);
+    --scene-btn-bg: rgba(0,0,0,0.03);
+    --scene-btn-border: rgba(0,0,0,0.08);
+    --scene-btn-text: rgba(26,26,46,0.45);
+    --scene-btn-hover-bg: rgba(0,0,0,0.06);
+    --scene-btn-hover-text: rgba(26,26,46,0.7);
+    --scene-btn-active-bg: rgba(59,130,246,0.1);
+    --scene-btn-active-border: rgba(59,130,246,0.25);
+    --legend-bg: rgba(0,0,0,0.02);
+    --legend-border: rgba(0,0,0,0.05);
+    --legend-text: rgba(26,26,46,0.35);
+    --window-bg: rgba(255,255,255,0.5);
+    --window-border: rgba(0,0,0,0.08);
+    --window-bar-bg: rgba(0,0,0,0.03);
+    --window-title: rgba(26,26,46,0.25);
+    --window-code: rgba(26,26,46,0.35);
+    --window-cursor: rgba(26,26,46,0.3);
+    --overlay-bg: rgba(0,0,0,0.3);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--page-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    transition: background 0.35s ease, color 0.35s ease;
+  }
+
+  .page-title { color: var(--page-title); font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; transition: color 0.35s ease; }
+  .page-subtitle { color: var(--page-subtitle); font-size: 14px; margin-bottom: 40px; font-weight: 400; transition: color 0.35s ease; }
+
+  .theme-toggle-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+  .theme-toggle { position: relative; width: 52px; height: 28px; background: rgba(255,255,255,0.08); border-radius: 14px; cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.06); flex-shrink: 0; }
+  .light .theme-toggle { background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.08); }
+  .theme-toggle-thumb { position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border-radius: 50%; transition: transform 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+  .light .theme-toggle-thumb { transform: translateX(24px); }
+  .theme-label { font-size: 12px; color: var(--text-tertiary); font-weight: 500; transition: color 0.35s ease; display: flex; align-items: center; gap: 4px; }
+
+  .desktop { position: relative; width: 900px; height: 620px; background: var(--desktop-bg); border-radius: 16px; overflow: visible; box-shadow: var(--desktop-shadow); margin-bottom: 60px; transition: background 0.35s ease, box-shadow 0.35s ease; }
+
+  /* === Pain Point Callout === */
+  .painpoint-callout {
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(239,68,68,0.06);
+    border: 1px solid rgba(239,68,68,0.15);
+    border-radius: 12px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    transition: color 0.35s ease;
+    z-index: 10;
+  }
+  .painpoint-callout .icon {
+    width: 28px; height: 28px;
+    background: rgba(239,68,68,0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .painpoint-callout .text strong {
+    color: #ef4444;
+    font-weight: 600;
+  }
+
+  .painpoint-arrow {
+    position: absolute;
+    top: -40px;
+    right: 80px;
+    font-size: 20px;
+    color: rgba(239,68,68,0.4);
+    animation: bounceDown 1.5s ease-in-out infinite;
+    z-index: 9;
+  }
+  @keyframes bounceDown {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(6px); opacity: 0.8; }
+  }
+
+  .menubar { position: absolute; top: 0; left: 0; right: 0; height: 28px; background: var(--menubar-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; z-index: 50; border-bottom: 1px solid var(--menubar-border); transition: background 0.35s ease, border-color 0.35s ease; }
+  .menubar-left { display: flex; align-items: center; gap: 20px; font-size: 12px; color: var(--menubar-color); font-weight: 500; transition: color 0.35s ease; }
+  .menubar-apple { font-size: 15px; }
+  .menubar-right { display: flex; align-items: center; gap: 16px; font-size: 12px; color: var(--menubar-color); transition: color 0.35s ease; }
+  .menubar-time { font-weight: 500; }
+  .menubar-icon { width: 18px; height: 18px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: 700; cursor: pointer; position: relative; }
+  .menubar-icon.active::after { content: ''; position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: #3B82F6; border-radius: 50%; }
+
+  .popover { position: absolute; top: 36px; right: 60px; width: 370px; max-height: 520px; background: var(--popover-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border-radius: 18px; border: 1px solid var(--popover-border); box-shadow: var(--popover-shadow); overflow: hidden; z-index: 100; animation: popIn 0.2s ease-out; transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(-8px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .popover-inner { padding: 16px; }
+
+  .panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--divider); transition: border-color 0.35s ease; }
+  .account-info { display: flex; align-items: center; gap: 10px; }
+  .account-badge { width: 28px; height: 28px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; }
+  .account-name { font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: color 0.35s ease; }
+  .account-key { font-size: 11px; color: var(--text-muted); font-family: 'SF Mono', 'Menlo', monospace; transition: color 0.35s ease; }
+  .account-switcher { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: var(--card-bg); border-radius: 8px; cursor: pointer; font-size: 11px; color: var(--text-tertiary); transition: all 0.15s; }
+  .account-switcher:hover { background: var(--card-hover); }
+
+  .balance-section { background: var(--balance-bg); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; border: 1px solid var(--balance-border); position: relative; overflow: hidden; transition: background 0.35s ease, border-color 0.35s ease; }
+  .balance-section::before { content: ''; position: absolute; top: -50%; right: -20%; width: 120px; height: 120px; background: radial-gradient(circle, var(--balance-glow), transparent); border-radius: 50%; }
+  .balance-label { font-size: 11px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 4px; position: relative; transition: color 0.35s ease; }
+  .balance-row { display: flex; align-items: baseline; gap: 8px; position: relative; }
+  .balance-amount { font-size: 34px; font-weight: 700; color: var(--text-primary); letter-spacing: -1px; transition: color 0.35s ease; }
+  .balance-currency { font-size: 16px; color: var(--text-tertiary); font-weight: 500; transition: color 0.35s ease; }
+  .balance-status { margin-left: auto; font-size: 11px; padding: 3px 8px; border-radius: 6px; background: rgba(34,197,94,0.12); color: #22c55e; font-weight: 500; }
+
+  .usage-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .usage-card { background: var(--card-bg); border-radius: 10px; padding: 12px 10px; text-align: center; border: 1px solid var(--card-border); transition: all 0.15s, background 0.35s ease, border-color 0.35s ease; }
+  .usage-card:hover { background: var(--card-hover); }
+  .usage-card-value { font-size: 18px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.3px; transition: color 0.35s ease; }
+  .usage-card-label { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.35s ease; }
+  .usage-card .input-color { color: #3B82F6; }
+  .usage-card .output-color { color: #22c55e; }
+  .usage-card .total-color { color: #8B5CF6; }
+
+  .menu-list { margin-bottom: 14px; }
+  .menu-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.12s; }
+  .menu-item:hover { background: var(--card-hover); }
+  .menu-item-left { display: flex; align-items: center; gap: 10px; }
+  .menu-item-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .menu-item-icon.tools { background: rgba(59,130,246,0.12); }
+  .menu-item-icon.news { background: rgba(139,92,246,0.12); }
+  .menu-item-icon.key { background: rgba(34,197,94,0.12); }
+  .menu-item-text { font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: color 0.35s ease; }
+  .menu-item-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; transition: color 0.35s ease; }
+  .menu-item-arrow { color: var(--text-muted); font-size: 14px; transition: color 0.35s ease; }
+  .menu-item-badge { font-size: 10px; padding: 2px 7px; border-radius: 5px; background: var(--card-bg); color: var(--text-tertiary); font-weight: 500; transition: background 0.35s ease, color 0.35s ease; margin-right: 6px; }
+
+  .panel-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--divider); transition: border-color 0.35s ease; }
+  .footer-btn { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 8px; background: transparent; border: none; color: var(--btn-text); font-size: 11px; cursor: pointer; transition: all 0.12s, color 0.35s ease; font-family: inherit; }
+  .footer-btn:hover { background: var(--btn-hover-bg); color: var(--btn-hover-text); }
+  .footer-btn.active { color: #3B82F6; }
+  .footer-btn.active:hover { background: rgba(59,130,246,0.1); color: #3B82F6; }
+
+  .state-label { font-size: 11px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; transition: color 0.35s ease; }
+  .back-btn { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-tertiary); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all 0.12s; margin-bottom: 12px; width: fit-content; }
+  .back-btn:hover { background: var(--card-hover); color: var(--text-secondary); }
+
+  .tool-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; cursor: pointer; transition: all 0.12s; }
+  .tool-item:hover { background: var(--card-hover); }
+  .tool-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .tool-icon.search { background: rgba(59,130,246,0.12); }
+  .tool-icon.file { background: rgba(139,92,246,0.12); }
+  .tool-icon.code { background: rgba(34,197,94,0.12); }
+  .tool-icon.image { background: rgba(251,146,60,0.12); }
+  .tool-icon.audio { background: rgba(236,72,153,0.12); }
+  .tool-info { flex: 1; }
+  .tool-name { font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: color 0.35s ease; }
+  .tool-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; transition: color 0.35s ease; }
+
+  .settings-section { margin-bottom: 16px; }
+  .settings-section-title { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; transition: color 0.35s ease; }
+  .key-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--key-item-bg); border-radius: 10px; margin-bottom: 6px; border: 1px solid var(--key-item-border); transition: background 0.35s ease, border-color 0.35s ease; }
+  .key-item.active { border-color: var(--key-active-border); background: var(--key-active-bg); }
+  .key-info { display: flex; align-items: center; gap: 10px; }
+  .key-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+  .key-dot.inactive { background: var(--text-muted); }
+  .key-name { font-size: 13px; color: var(--text-secondary); font-weight: 500; transition: color 0.35s ease; }
+  .key-masked { font-size: 11px; color: var(--text-muted); font-family: 'SF Mono', 'Menlo', monospace; transition: color 0.35s ease; }
+  .key-actions { display: flex; gap: 4px; }
+  .key-action-btn { width: 26px; height: 26px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.12s; }
+  .key-action-btn:hover { background: var(--card-hover); color: var(--text-secondary); }
+  .key-action-btn.delete:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+  .add-key-btn { width: 100%; padding: 10px; border-radius: 10px; border: 1px dashed var(--card-border); background: transparent; color: var(--text-muted); font-size: 12px; cursor: pointer; transition: all 0.12s; font-family: inherit; }
+  .add-key-btn:hover { border-color: rgba(59,130,246,0.3); color: var(--text-secondary); background: rgba(59,130,246,0.04); }
+
+  /* === Modal / Overlay === */
+  .modal-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--overlay-bg);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    animation: fadeIn 0.2s ease-out;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .modal-box {
+    width: 340px;
+    background: var(--popover-bg);
+    border: 1px solid var(--popover-border);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    padding: 20px;
+    animation: modalSlide 0.25s ease-out;
+  }
+  @keyframes modalSlide { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+  .modal-title {
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    transition: color 0.35s ease;
+  }
+  .modal-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.5;
+    transition: color 0.35s ease;
+  }
+  .modal-sub strong {
+    color: var(--text-secondary);
+  }
+
+  .form-group { margin-bottom: 12px; }
+  .form-label {
+    display: block;
+    font-size: 11px; font-weight: 500;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+    transition: color 0.35s ease;
+  }
+  .form-input {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .form-input:focus {
+    border-color: rgba(59,130,246,0.3);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.08);
+  }
+  .form-input::placeholder {
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+  }
+  .form-hint {
+    font-size: 10px;
+    color: rgba(239,68,68,0.7);
+    margin-top: 4px;
+    transition: color 0.35s ease;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 9px 0;
+    border-radius: 10px;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: inherit;
+  }
+  .modal-btn.primary {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    color: white;
+  }
+  .modal-btn.primary:hover {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+  .modal-btn.secondary {
+    background: var(--card-bg);
+    color: var(--text-tertiary);
+  }
+  .modal-btn.secondary:hover {
+    background: var(--card-hover);
+    color: var(--text-secondary);
+  }
+
+  .key-saved-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(34,197,94,0.1);
+    color: #22c55e;
+    font-weight: 500;
+  }
+
+  .scene-nav { display: flex; gap: 12px; margin-bottom: 20px; position: absolute; bottom: -48px; left: 50%; transform: translateX(-50%); }
+  .scene-btn { padding: 6px 18px; border-radius: 20px; border: 1px solid var(--scene-btn-border); background: var(--scene-btn-bg); color: var(--scene-btn-text); font-size: 12px; cursor: pointer; transition: all 0.15s, background 0.35s ease, border-color 0.35s ease, color 0.35s ease; font-family: inherit; }
+  .scene-btn:hover { background: var(--scene-btn-hover-bg); color: var(--scene-btn-hover-text); }
+  .scene-btn.active { background: var(--scene-btn-active-bg); border-color: var(--scene-btn-active-border); color: #3B82F6; }
+
+  .desktop-wrapper { position: relative; margin-bottom: 80px; }
+
+  .legend { display: flex; gap: 24px; padding: 16px 24px; background: var(--legend-bg); border-radius: 12px; border: 1px solid var(--legend-border); margin-top: 12px; transition: background 0.35s ease, border-color 0.35s ease; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--legend-text); transition: color 0.35s ease; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 4px; }
+  .legend-dot.blue { background: #3B82F6; }
+  .legend-dot.green { background: #22c55e; }
+  .legend-dot.purple { background: #8B5CF6; }
+  .legend-dot.orange { background: #fb923c; }
+  .legend-dot.red { background: #ef4444; }
+
+  .desktop-content { padding: 40px 48px; padding-top: 48px; }
+  .desktop-window { width: 100%; max-width: 600px; background: var(--window-bg); border-radius: 12px; border: 1px solid var(--window-border); overflow: hidden; margin-top: 10px; transition: background 0.35s ease, border-color 0.35s ease; }
+  .desktop-window-bar { padding: 10px 14px; display: flex; align-items: center; gap: 8px; background: var(--window-bar-bg); transition: background 0.35s ease; }
+  .window-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .window-dot.red { background: #ef4444; }
+  .window-dot.yellow { background: #eab308; }
+  .window-dot.green { background: #22c55e; }
+  .window-title { font-size: 11px; color: var(--window-title); margin-left: 6px; transition: color 0.35s ease; }
+  .desktop-window-body { padding: 20px; font-family: 'SF Mono', 'Menlo', monospace; font-size: 12px; color: var(--window-code); line-height: 1.8; transition: color 0.35s ease; }
+  .desktop-window-body .code-green { color: #22c55e; }
+  .desktop-window-body .code-blue { color: #3B82F6; }
+  .desktop-window-body .code-purple { color: #8B5CF6; }
+  .desktop-window-body .code-gray { color: var(--text-muted); }
+  .cursor-blink { display: inline-block; width: 2px; height: 14px; background: var(--window-cursor); animation: blink 1s step-end infinite; vertical-align: text-bottom; transition: background 0.35s ease; }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  @media (max-width: 960px) { .desktop { width: 100%; height: 520px; } .popover { right: 10px; } .desktop-content { padding: 36px 20px; } .desktop-window { max-width: 100%; } }
+</style>
+</head>
+<body class="light">
+
+  <h1 class="page-title">DeepSeek Menu Bar · 原型图</h1>
+  <p class="page-subtitle">macOS 菜单栏插件 · 解决 API Key 创建后只显示一次的问题</p>
+
+  <div class="theme-toggle-wrap">
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+      <div class="theme-toggle-thumb">🌙</div>
+    </div>
+    <span class="theme-label" id="themeLabel">☀️ 日照模式</span>
+  </div>
+
+  <div class="desktop-wrapper">
+    <div class="desktop" id="desktop">
+
+      <!-- Pain Point Callout -->
+      <div class="painpoint-callout">
+        <div class="icon">⚠️</div>
+        <div class="text">
+          <strong>痛点：</strong>DeepSeek 官方新建 API Key 只显示一次，关闭后就再也看不到了
+        </div>
+      </div>
+      <div class="painpoint-arrow">👇</div>
+
+      <div class="menubar">
+        <div class="menubar-left">
+          <span class="menubar-apple">🍎</span>
+          <span>Finder</span>
+          <span>File</span>
+          <span>Edit</span>
+          <span>View</span>
+          <span>Go</span>
+          <span>Window</span>
+          <span>Help</span>
+        </div>
+        <div class="menubar-right">
+          <span class="menubar-icon active">D</span>
+          <span>🔊</span>
+          <span>Wi‑Fi</span>
+          <span class="menubar-battery">🔋 82%</span>
+          <span class="menubar-time">10:42</span>
+        </div>
+      </div>
+
+      <div class="desktop-content">
+        <div class="desktop-window">
+          <div class="desktop-window-bar">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+            <span class="window-title">DeepSeek Console — API Keys</span>
+          </div>
+          <div class="desktop-window-body">
+            <span class="code-purple" style="font-weight:600;">✓ API Key 已创建成功</span><br>
+            <br>
+            <span class="code-gray">密钥仅在此刻显示一次，关闭后将无法再次查看。</span><br>
+            <br>
+            <span class="code-gray">Key:</span><br>
+            <span class="code-blue">sk-1a2b3c4d5e6f7g8h9i0j</span><span class="code-green" style="font-weight:600;"> ← 立即复制保存！</span><br>
+            <br>
+            <span class="code-gray">[已复制] → 打开 DeepSeek Menu Bar 粘贴保存</span><br>
+            <span class="code-gray">$</span> <span class="cursor-blink"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="popover" id="popover"></div>
+    </div>
+
+    <div class="scene-nav">
+      <button class="scene-btn active" data-scene="dashboard">🏠 首页看板</button>
+      <button class="scene-btn" data-scene="addkey">🔑 添加 Key</button>
+      <button class="scene-btn" data-scene="settings">⚙️ 设置管理</button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot red"></span> 痛点：Key 只显示一次</div>
+      <div class="legend-item"><span class="legend-dot green"></span> 解决：安全本地存储</div>
+      <div class="legend-item"><span class="legend-dot blue"></span> macOS Keychain 加密</div>
+    </div>
+  </div>
+
+  <!-- Scene: Dashboard -->
+  <template id="scene-dashboard">
+    <div class="popover-inner">
+      <div class="panel-header">
+        <div class="account-info">
+          <div class="account-badge">D</div>
+          <div>
+            <div class="account-name">DeepSeek 主账号</div>
+            <div class="account-key">sk-8a3f...2b1e</div>
+            <span class="key-saved-badge">🔒 Keychain 已保存</span>
+          </div>
+        </div>
+        <div class="account-switcher">
+          <span>切换账号</span>
+          <span style="font-size:10px;">▼</span>
+        </div>
+      </div>
+
+      <div class="balance-section">
+        <div class="balance-label">账户余额</div>
+        <div class="balance-row">
+          <span class="balance-amount">$12.34</span>
+          <span class="balance-currency">USD</span>
+          <span class="balance-status">● 正常</span>
+        </div>
+      </div>
+
+      <div class="usage-grid">
+        <div class="usage-card">
+          <div class="usage-card-value input-color">45.2k</div>
+          <div class="usage-card-label">输入 Tokens</div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-card-value output-color">12.1k</div>
+          <div class="usage-card-label">输出 Tokens</div>
+        </div>
+        <div class="usage-card">
+          <div class="usage-card-value total-color">57.3k</div>
+          <div class="usage-card-label">今日总计</div>
+        </div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-item" onclick="switchScene('settings')">
+          <div class="menu-item-left">
+            <div class="menu-item-icon key">🔑</div>
+            <div>
+              <div class="menu-item-text">API Key 管理</div>
+              <div class="menu-item-sub">已安全保存 3 个 Key · macOS Keychain 加密</div>
+            </div>
+          </div>
+          <div class="menu-item-badge">3</div>
+          <div class="menu-item-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="switchScene('tools')">
+          <div class="menu-item-left">
+            <div class="menu-item-icon tools">🔧</div>
+            <div>
+              <div class="menu-item-text">可用工具</div>
+              <div class="menu-item-sub">DeepSeek 当前支持 5 个工具</div>
+            </div>
+          </div>
+          <div class="menu-item-badge">5</div>
+          <div class="menu-item-arrow">›</div>
+        </div>
+        <div class="menu-item" onclick="switchScene('news')">
+          <div class="menu-item-left">
+            <div class="menu-item-icon news">📰</div>
+            <div>
+              <div class="menu-item-text">最新资讯</div>
+              <div class="menu-item-sub">DeepSeek 相关动态</div>
+            </div>
+          </div>
+          <div class="menu-item-arrow">›</div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <button class="footer-btn pin-btn">📌 置顶</button>
+        <button class="footer-btn">🔄 刷新</button>
+        <button class="footer-btn" onclick="switchScene('settings')">⚙️ 设置</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scene: Add Key (Modal) -->
+  <template id="scene-addkey">
+    <div class="popover-inner" style="position:relative;">
+      <div class="back-btn" onclick="switchScene('dashboard')">← 返回首页</div>
+      <div class="state-label" style="color:#22c55e;">🔑 新建 Key · 立即保存</div>
+
+      <!-- Pain point reminder inside panel -->
+      <div style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.08);border-radius:10px;padding:10px 12px;margin-bottom:14px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;">⚠️</span>
+        <span style="font-size:11px;color:var(--text-tertiary);">DeepSeek 官网 Key <strong style="color:#ef4444;">只显示一次</strong>，立即粘贴保存到本地</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">名称（给你的 Key 起个名字）</label>
+        <input class="form-input" type="text" placeholder="例如：个人主账号 / 团队测试号"
+          style="font-family:'Inter',sans-serif;"
+          value="个人主账号" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">API Key（粘贴完整密钥）</label>
+        <input class="form-input" type="text" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          value="sk-1a2b3c4d5e6f7g8h9i0j" />
+        <div class="form-hint">✓ 密钥将在保存后以掩码形式显示，不会泄露</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="switchScene('dashboard')">取消</button>
+        <button class="modal-btn primary" onclick="showSavedToast(); switchScene('dashboard')">💾 保存到 Keychain</button>
+      </div>
+
+      <div style="margin-top:14px;padding:10px 12px;background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.08);border-radius:10px;font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;gap:8px;">
+        <span style="font-size:14px;">🔒</span>
+        <span>存储于 <strong style="color:var(--text-secondary);">macOS Keychain</strong>，系统级加密，其他应用无法读取</span>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scene: Tools -->
+  <template id="scene-tools">
+    <div class="popover-inner">
+      <div class="back-btn" onclick="switchScene('dashboard')">← 返回首页</div>
+      <div class="state-label">可用工具 · 5 个</div>
+      <div class="tool-item">
+        <div class="tool-icon search">🔍</div>
+        <div class="tool-info">
+          <div class="tool-name">联网搜索</div>
+          <div class="tool-desc">实时搜索互联网信息</div>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon file">📄</div>
+        <div class="tool-info">
+          <div class="tool-name">文件读取</div>
+          <div class="tool-desc">读取并分析上传的文件内容</div>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon code">💻</div>
+        <div class="tool-info">
+          <div class="tool-name">代码执行</div>
+          <div class="tool-desc">沙箱环境执行代码</div>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon image">🖼️</div>
+        <div class="tool-info">
+          <div class="tool-name">图像理解</div>
+          <div class="tool-desc">识别并分析图像内容</div>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon audio">🎤</div>
+        <div class="tool-info">
+          <div class="tool-name">语音识别</div>
+          <div class="tool-desc">音频转文字处理</div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scene: News -->
+  <template id="scene-news">
+    <div class="popover-inner">
+      <div class="back-btn" onclick="switchScene('dashboard')">← 返回首页</div>
+      <div class="state-label">最新资讯</div>
+      <div style="position:relative;margin-bottom:14px;">
+        <input type="text" placeholder="搜索 DeepSeek 相关新闻..."
+          style="width:100%;padding:10px 12px;padding-left:34px;border-radius:10px;border:1px solid var(--card-border);background:var(--card-bg);color:var(--text-primary);font-size:12px;font-family:inherit;outline:none;transition:all 0.35s ease" />
+        <span style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-muted);">🔍</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-info">
+          <div class="tool-name">DeepSeek R2 模型即将发布</div>
+          <div class="tool-desc">2 小时前 · 机器之心</div>
+        </div>
+        <span style="font-size:10px;color:var(--text-muted);padding:2px 6px;border-radius:4px;background:var(--card-bg);">NEW</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-info">
+          <div class="tool-name">DeepSeek API 价格调整公告</div>
+          <div class="tool-desc">1 天前 · 官方公告</div>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-info">
+          <div class="tool-name">DeepSeek 开源新模型架构</div>
+          <div class="tool-desc">3 天前 · GitHub</div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Scene: Settings -->
+  <template id="scene-settings">
+    <div class="popover-inner">
+      <div class="back-btn" onclick="switchScene('dashboard')">← 返回首页</div>
+      <div class="state-label">设置管理</div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">API Key 管理 <span style="color:#22c55e;text-transform:none;letter-spacing:0;">· 已安全保存到 Keychain</span></div>
+        <div class="key-item active">
+          <div class="key-info">
+            <span class="key-dot"></span>
+            <div>
+              <div class="key-name">DeepSeek 主账号</div>
+              <div class="key-masked">sk-8a3f••••••2b1e</div>
+            </div>
+          </div>
+          <div class="key-actions">
+            <button class="key-action-btn">👁️</button>
+            <button class="key-action-btn">✏️</button>
+            <button class="key-action-btn delete">🗑️</button>
+          </div>
+        </div>
+        <div class="key-item">
+          <div class="key-info">
+            <span class="key-dot inactive"></span>
+            <div>
+              <div class="key-name">备用账号</div>
+              <div class="key-masked">sk-c7d2••••••3f8a</div>
+            </div>
+          </div>
+          <div class="key-actions">
+            <button class="key-action-btn">👁️</button>
+            <button class="key-action-btn">✏️</button>
+            <button class="key-action-btn delete">🗑️</button>
+          </div>
+        </div>
+        <div class="key-item">
+          <div class="key-info">
+            <span class="key-dot inactive"></span>
+            <div>
+              <div class="key-name">团队测试号</div>
+              <div class="key-masked">sk-f5e9••••••7c3d</div>
+            </div>
+          </div>
+          <div class="key-actions">
+            <button class="key-action-btn">👁️</button>
+            <button class="key-action-btn">✏️</button>
+            <button class="key-action-btn delete">🗑️</button>
+          </div>
+        </div>
+        <button class="add-key-btn" onclick="switchScene('addkey')">＋ 添加 API Key（新建 Key 立即保存）</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">外观</div>
+        <div class="key-item" style="justify-content:space-between;">
+          <div>
+            <div class="key-name">主题模式</div>
+            <div class="key-masked">跟随系统 / 深色 / 浅色</div>
+          </div>
+          <div class="key-action-btn" style="font-size:12px;width:auto;padding:0 8px;border:1px solid var(--card-border);border-radius:8px;" onclick="toggleTheme()">
+            切换主题
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <button class="footer-btn">📌 置顶</button>
+        <button class="footer-btn">🔄 刷新</button>
+        <button class="footer-btn">⚙️ 设置</button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const sceneTemplates = {
+      dashboard: document.getElementById('scene-dashboard').innerHTML,
+      addkey: document.getElementById('scene-addkey').innerHTML,
+      tools: document.getElementById('scene-tools').innerHTML,
+      news: document.getElementById('scene-news').innerHTML,
+      settings: document.getElementById('scene-settings').innerHTML,
+    };
+
+    function switchScene(name) {
+      document.getElementById('popover').innerHTML = sceneTemplates[name] || sceneTemplates.dashboard;
+      document.querySelectorAll('.scene-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.scene === name);
+      });
+    }
+
+    function showSavedToast() {
+      const toast = document.createElement('div');
+      toast.textContent = '✅ Key 已安全保存到 macOS Keychain！';
+      Object.assign(toast.style, {
+        position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)',
+        background: '#22c55e', color: 'white', padding: '12px 24px', borderRadius: '12px',
+        fontSize: '14px', fontWeight: '500', zIndex: '9999',
+        boxShadow: '0 8px 24px rgba(34,197,94,0.35)',
+        animation: 'modalSlide 0.3s ease-out'
+      });
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    function toggleTheme() {
+      const isLight = document.body.classList.toggle('light');
+      const thumb = document.querySelector('.theme-toggle-thumb');
+      const label = document.getElementById('themeLabel');
+      if (isLight) {
+        thumb.textContent = '☀️';
+        label.textContent = '☀️ 日照模式';
+      } else {
+        thumb.textContent = '🌙';
+        label.textContent = '🌙 暗夜模式';
+      }
+    }
+
+    setTimeout(() => switchScene('dashboard'), 0);
+  </script>
+
+</body>
+</html>
