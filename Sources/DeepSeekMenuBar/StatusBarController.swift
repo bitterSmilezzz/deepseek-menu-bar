@@ -23,6 +23,7 @@ class StatusBarController: NSObject {
 
         statusBarButton.action = #selector(togglePopover)
         statusBarButton.target = self
+        statusBarButton.sendAction(on: [.leftMouseUp, .rightMouseUp])
     }
 
     private func createIcon() -> NSImage {
@@ -68,6 +69,12 @@ class StatusBarController: NSObject {
     @objc private func togglePopover() {
         guard let button = statusBarButton else { return }
 
+        let event = NSApp.currentEvent
+        if event?.type == .rightMouseUp {
+            showContextMenu(button)
+            return
+        }
+
         if popoverController.isShown {
             if !popoverController.isCurrentlyPinned {
                 popoverController.close()
@@ -75,5 +82,25 @@ class StatusBarController: NSObject {
         } else {
             popoverController.show(relativeTo: button.bounds, of: button)
         }
+    }
+
+    private func showContextMenu(_ button: NSStatusBarButton) {
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(title: "关于 DeepSeek Menu Bar", action: #selector(showAbout), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "退出", action: #selector(quitApp), keyEquivalent: "q"))
+        menu.popUp(positioning: nil, at: NSPoint(x: 0, y: button.bounds.height), in: button)
+    }
+
+    @objc private func showAbout() {
+        let alert = NSAlert()
+        alert.messageText = "DeepSeek Menu Bar"
+        alert.informativeText = "版本 1.0.0\nmacOS 菜单栏 DeepSeek API 管理工具"
+        alert.alertStyle = .informational
+        alert.runModal()
+    }
+
+    @objc private func quitApp() {
+        NSApplication.shared.terminate(nil)
     }
 }
