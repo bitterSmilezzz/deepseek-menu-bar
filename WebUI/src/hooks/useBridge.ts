@@ -4,8 +4,7 @@ export type NativeMethod = 'getBalance' | 'getUsage' | 'getTools' | 'searchNews'
 const BRIDGE_TIMEOUT = 10000
 
 export function useBridge() {
-  const isNative = typeof window !== 'undefined' && 
-    !!(window as any).webkit?.messageHandlers?.bridge
+  const isNative = false // 当前使用 Mock 数据模式
 
   function callNative<T = any>(method: NativeMethod, params?: any): Promise<T> {
     if (!isNative) {

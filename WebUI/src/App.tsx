@@ -53,16 +53,15 @@ export default function App() {
 
   async function loadData() {
     try {
-      const [keys, balance, usage, tools] = await Promise.all([
-        callNative<ApiKey[]>('getApiKeys').catch(() => []),
-        callNative<Balance>('getBalance').catch(() => null),
-        callNative<Usage>('getUsage').catch(() => null),
-        callNative<Tool[]>('getTools').catch(() => []),
-      ])
-      if (keys) setApiKeys(keys)
+      const keys = await callNative<ApiKey[]>('getApiKeys').catch(() => [])
+      const balance = await callNative<Balance>('getBalance').catch(() => null)
+      const usage = await callNative<Usage>('getUsage').catch(() => null)
+      const tools = await callNative<any>('getTools').catch(() => [])
+
+      if (Array.isArray(keys)) setApiKeys(keys)
       if (balance) setBalance(balance)
       if (usage) setUsage(usage)
-      if (tools) setTools(tools)
+      if (Array.isArray(tools)) setTools(tools)
     } catch (e: any) {
       console.warn('[DeepSeek] loadData error:', e)
       setError(e.message)

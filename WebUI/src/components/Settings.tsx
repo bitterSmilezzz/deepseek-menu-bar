@@ -35,6 +35,19 @@ export default function Settings({ onNavigate, callNative }: SettingsProps) {
     setVisibleKeys(prev => ({ ...prev, [id]: !prev[id] }))
   }
 
+  async function copyKey(key: string) {
+    try {
+      await navigator.clipboard.writeText(key)
+      const btn = document.activeElement as HTMLElement
+      if (btn) {
+        btn.textContent = '✅'
+        setTimeout(() => { btn.textContent = '📋' }, 1500)
+      }
+    } catch {
+      // ignore
+    }
+  }
+
   return (
     <div className="space-y-4">
       <button onClick={() => onNavigate('dashboard')} className="flex items-center gap-1.5 text-xs transition-all duration-200 hover:opacity-70" style={{ color: 'var(--btn-text)' }}>
@@ -65,6 +78,9 @@ export default function Settings({ onNavigate, callNative }: SettingsProps) {
                 </span>
                 <button onClick={() => toggleVisible(apiKey.id)} className="text-xs transition-all duration-200 hover:opacity-70" style={{ color: 'var(--btn-text)' }}>
                   {visibleKeys[apiKey.id] ? '🙈' : '👁️'}
+                </button>
+                <button onClick={() => copyKey(apiKey.key)} className="text-xs transition-all duration-200 hover:opacity-70" title="复制" style={{ color: 'var(--btn-text)' }}>
+                  📋
                 </button>
               </div>
               <div className="flex items-center gap-2">
