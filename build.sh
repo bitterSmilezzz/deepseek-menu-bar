@@ -16,7 +16,7 @@ if [ -d "$PROJECT_DIR/WebUI" ]; then
     if [ -f "package.json" ]; then
         npm install --silent
         npm run build
-        echo "  WebUI build complete."
+        echo "  WebUI build complete (single-file output)."
     else
         echo "  No package.json found in WebUI, skipping."
     fi

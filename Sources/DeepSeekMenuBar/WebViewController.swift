@@ -75,7 +75,10 @@ class WebViewController: NSViewController {
 
         webView = WKWebView(frame: view.bounds, configuration: config)
         webView.autoresizingMask = [.width, .height]
-        webView.setValue(false, forKey: "drawsBackground")
+        if #available(macOS 10.13, *) {
+            webView.setValue(true, forKey: "drawsBackground")
+            webView.setValue(NSColor(red: 0x0a/255, green: 0x0a/255, blue: 0x0f/255, alpha: 1), forKey: "backgroundColor")
+        }
 
         view.addSubview(webView)
     }
@@ -89,20 +92,47 @@ class WebViewController: NSViewController {
     }
 
     private func loadLocalFile() {
-        guard let resourcePath = Bundle.main.resourcePath else {
-            loadFallback()
-            return
+        let distPaths = possibleDistPaths()
+        for distPath in distPaths {
+            let indexPath = (distPath as NSString).appendingPathComponent("index.html")
+            if FileManager.default.fileExists(atPath: indexPath) {
+                do {
+                    let html = try String(contentsOfFile: indexPath, encoding: .utf8)
+                    let url = URL(fileURLWithPath: distPath)
+                    webView.loadHTMLString(html, baseURL: url)
+                    return
+                } catch {
+                    continue
+                }
+            }
+        }
+        loadFallback()
+    }
+
+    private func possibleDistPaths() -> [String] {
+        var paths: [String] = []
+
+        if let resourcePath = Bundle.main.resourcePath {
+            paths.append((resourcePath as NSString).appendingPathComponent("dist"))
         }
 
-        let distPath = (resourcePath as NSString).appendingPathComponent("dist")
-        var isDir: ObjCBool = false
-
-        if FileManager.default.fileExists(atPath: distPath, isDirectory: &isDir), isDir.boolValue {
-            let url = URL(fileURLWithPath: distPath)
-            webView.loadFileURL(url.appendingPathComponent("index.html"), allowingReadAccessTo: url)
-        } else {
-            loadFallback()
+        let execURL = Bundle.main.executableURL
+        if let execPath = execURL?.path {
+            var projectRoot = (execPath as NSString).deletingLastPathComponent
+            if projectRoot.hasSuffix(".build/debug") || projectRoot.hasSuffix(".build/release") {
+                for _ in 0..<3 {
+                    projectRoot = (projectRoot as NSString).deletingLastPathComponent
+                }
+            } else if projectRoot.hasSuffix("MacOS") {
+                projectRoot = ((projectRoot as NSString).deletingLastPathComponent as NSString).deletingLastPathComponent
+            }
+            projectRoot = (projectRoot as NSString).standardizingPath
+            paths.append((projectRoot as NSString).appendingPathComponent("WebUI/dist"))
         }
+
+        paths.append((FileManager.default.currentDirectoryPath as NSString).appendingPathComponent("WebUI/dist"))
+
+        return paths
     }
 
     private func loadDevServer() {
@@ -135,6 +165,7 @@ class WebViewController: NSViewController {
                 .icon { font-size: 48px; margin-bottom: 16px; }
                 h1 { font-size: 20px; margin-bottom: 8px; color: #4fc3f7; }
                 p { font-size: 14px; color: #999; line-height: 1.5; }
+                .paths { font-size: 11px; color: #666; margin-top: 12px; }
             </style>
         </head>
         <body>
@@ -142,6 +173,7 @@ class WebViewController: NSViewController {
                 <div class="icon">🔍</div>
                 <h1>WebUI Not Loaded</h1>
                 <p>Please build the WebUI first by running:<br><code>cd WebUI && npm run build</code></p>
+                <p class="paths">Searched:<br>\(possibleDistPaths().joined(separator: "<br>"))</p>
             </div>
         </body>
         </html>

@@ -5,8 +5,6 @@ class StatusBarController: NSObject {
     private var statusBarButton: NSStatusBarButton!
     private let popoverController: PopoverController
     private let bridgeHandler: BridgeHandler
-    private var balanceBelowThreshold = false
-    private let lowBalanceThreshold = 1.0
 
     init(bridgeHandler: BridgeHandler) {
         self.bridgeHandler = bridgeHandler
@@ -15,81 +13,55 @@ class StatusBarController: NSObject {
         super.init()
 
         setupStatusItem()
-        setupObservers()
-    }
-
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(activeKeyChanged),
-            name: NSNotification.Name("ActiveKeyChanged"),
-            object: nil
-        )
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(balanceDidUpdate),
-            name: NSNotification.Name("BalanceDidUpdate"),
-            object: nil
-        )
     }
 
     private func setupStatusItem() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusBarButton = statusItem.button
 
-        setupCustomIcon()
+        statusBarButton.image = createIcon()
 
         statusBarButton.action = #selector(togglePopover)
         statusBarButton.target = self
     }
 
-    private func setupCustomIcon() {
-        let iconSize = NSSize(width: 18, height: 18)
-        let image = NSImage(size: iconSize)
+    private func createIcon() -> NSImage {
+        let size = NSSize(width: 20, height: 16)
+        let image = NSImage(size: size)
+
         image.lockFocus()
 
-        let rect = NSRect(origin: .zero, size: iconSize)
+        let rect = NSRect(x: 0, y: 0, width: 20, height: 16)
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
 
-        let gradient = NSGradient(starting: NSColor(red: 0.23, green: 0.51, blue: 0.96, alpha: 1.0),
-                                  ending: NSColor(red: 0.55, green: 0.34, blue: 0.97, alpha: 1.0))
+        let gradient = NSGradient(
+            starting: NSColor(red: 0.23, green: 0.51, blue: 0.96, alpha: 1.0),
+            ending: NSColor(red: 0.55, green: 0.34, blue: 0.97, alpha: 1.0)
+        )
         gradient?.draw(in: path, angle: 135)
 
         let text = "D" as NSString
-        let textAttrs: [NSAttributedString.Key: Any] = [
+        let attrs: [NSAttributedString.Key: Any] = [
             .font: NSFont.boldSystemFont(ofSize: 11),
             .foregroundColor: NSColor.white
         ]
-        let textSize = text.size(withAttributes: textAttrs)
-        let textRect = NSRect(
-            x: (iconSize.width - textSize.width) / 2,
-            y: (iconSize.height - textSize.height) / 2 - 0.5,
-            width: textSize.width,
-            height: textSize.height
+        let textSize = text.size(withAttributes: attrs)
+        let textPoint = NSPoint(
+            x: (size.width - textSize.width) / 2,
+            y: (size.height - textSize.height) / 2 - 0.5
         )
-        text.draw(in: textRect, withAttributes: textAttrs)
+        text.draw(at: textPoint, withAttributes: attrs)
 
         image.unlockFocus()
         image.isTemplate = false
 
-        statusBarButton.image = image
+        return image
     }
 
     func showPopoverOnLaunch() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self = self, let button = self.statusBarButton else { return }
             self.popoverController.show(relativeTo: button.bounds, of: button)
-        }
-    }
-
-    private func updateIcon(normal: Bool) {
-        setupCustomIcon()
-
-        if balanceBelowThreshold {
-            statusBarButton.contentTintColor = .systemYellow
-        } else {
-            statusBarButton.contentTintColor = nil
         }
     }
 
@@ -103,23 +75,5 @@ class StatusBarController: NSObject {
         } else {
             popoverController.show(relativeTo: button.bounds, of: button)
         }
-    }
-
-    @objc private func activeKeyChanged(_ notification: Notification) {
-        let keyId = notification.object as? String
-        bridgeHandler.setActiveKeyId(keyId)
-    }
-
-    @objc private func balanceDidUpdate(_ notification: Notification) {
-        if let balanceString = notification.object as? String,
-           let balance = Double(balanceString) {
-            balanceBelowThreshold = balance < lowBalanceThreshold
-            updateIcon(normal: !balanceBelowThreshold)
-        }
-    }
-
-    func setBalanceBelowThreshold(_ below: Bool) {
-        balanceBelowThreshold = below
-        updateIcon(normal: !below)
     }
 }

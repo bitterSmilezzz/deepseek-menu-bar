@@ -1,33 +1,50 @@
 export type NativeMethod = 'getBalance' | 'getUsage' | 'getTools' | 'searchNews' |
   'getApiKeys' | 'saveApiKey' | 'deleteApiKey' | 'setActiveKey' | 'togglePin'
 
-const BRIDGE_TIMEOUT = 30000
+const BRIDGE_TIMEOUT = 10000
 
 export function useBridge() {
-  const isNative = 'webkit' in window && 'messageHandlers' in (window as any).webkit
+  const isNative = typeof window !== 'undefined' && 
+    !!(window as any).webkit?.messageHandlers?.bridge
 
   function callNative<T = any>(method: NativeMethod, params?: any): Promise<T> {
-    return new Promise((resolve, reject) => {
-      if (!isNative) {
-        handleMock(method, params).then(resolve as any).catch(reject)
-        return
-      }
+    if (!isNative) {
+      return handleMock(method, params) as Promise<T>
+    }
 
-      const id = Date.now().toString()
+    return new Promise((resolve, reject) => {
+      const requestId = 'req_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
       const timeout = setTimeout(() => {
+        window.removeEventListener('nativeBridgeResponse', handler)
         reject(new Error(`Bridge timeout: ${method}`))
       }, BRIDGE_TIMEOUT)
 
-      ;(window as any).__bridgeCallbacks = (window as any).__bridgeCallbacks || {}
-      ;(window as any).__bridgeCallbacks[id] = (response: any) => {
-        clearTimeout(timeout)
-        if (response.success) resolve(response.data)
-        else reject(new Error(response.error || 'Unknown error'))
+      function handler(event: Event) {
+        const detail = (event as CustomEvent).detail
+        if (detail.request_id === requestId) {
+          window.removeEventListener('nativeBridgeResponse', handler)
+          clearTimeout(timeout)
+          if (detail.type === 'error') {
+            reject(new Error(detail.error || 'Unknown error'))
+          } else {
+            resolve(detail.data as T)
+          }
+        }
       }
 
-      ;(window as any).webkit.messageHandlers.bridge.postMessage({
-        id, method, params,
-      })
+      window.addEventListener('nativeBridgeResponse', handler)
+
+      try {
+        ;(window as any).webkit.messageHandlers.bridge.postMessage({
+          method: method,
+          params: params ?? {},
+          request_id: requestId,
+        })
+      } catch (e: any) {
+        window.removeEventListener('nativeBridgeResponse', handler)
+        clearTimeout(timeout)
+        handleMock(method, params).then(resolve as any).catch(reject)
+      }
     })
   }
 
@@ -63,11 +80,11 @@ async function handleMock(method: NativeMethod, params?: any) {
         { id: '2', name: '备用账号', key: 'sk-c7d2...3f8a', masked: 'sk-c7d2••••••3f8a', createdAt: '2026-06-05', isActive: false },
       ]
     case 'saveApiKey':
-      return true
+      return { id: '3', name: params?.name || 'New Key', key: params?.key || '', createdAt: new Date().toISOString() }
     case 'deleteApiKey':
-      return true
+      return { success: true }
     case 'setActiveKey':
-      return true
+      return { success: true }
     case 'togglePin':
       return { pinned: true }
     default:
