@@ -1,4 +1,4 @@
-# DeepSeek Menu Bar
+# DeepSeek 工具箱
 
 macOS 菜单栏插件 — 实时查看 DeepSeek API 余额、用量，安全管理 API Key。
 

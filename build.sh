@@ -6,7 +6,7 @@ APP_NAME="DeepSeekMenuBar"
 BUILD_DIR="$PROJECT_DIR/.build"
 APP_BUNDLE="$PROJECT_DIR/$APP_NAME.app"
 
-echo "=== Building DeepSeek Menu Bar ==="
+echo "=== Building DeepSeek 工具箱 ==="
 
 # Step 1: Build WebUI if exists
 if [ -d "$PROJECT_DIR/WebUI" ]; then

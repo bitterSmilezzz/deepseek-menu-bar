@@ -41,10 +41,20 @@ class StatusBarController: NSObject {
 
     private func showContextMenu(at view: NSView) {
         let menu = NSMenu()
-        let quitItem = NSMenuItem(title: "退出 DeepSeek Menu Bar", action: #selector(quitApp), keyEquivalent: "q")
+        menu.addItem(NSMenuItem(title: "关于 DeepSeek 工具箱", action: #selector(showAbout), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        let quitItem = NSMenuItem(title: "退出 DeepSeek 工具箱", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
         menu.popUp(positioning: nil, at: NSPoint(x: 0, y: view.bounds.height), in: view)
+    }
+
+    @objc private func showAbout() {
+        let alert = NSAlert()
+        alert.messageText = "DeepSeek 工具箱"
+        alert.informativeText = "版本 1.0.0\nmacOS 菜单栏 DeepSeek API 管理工具"
+        alert.alertStyle = .informational
+        alert.runModal()
     }
 
     private func createIcon() -> NSImage {
