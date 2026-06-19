@@ -45,8 +45,12 @@ cp "$EXECUTABLE_PATH" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 cp "$PROJECT_DIR/Resources/Info.plist" "$APP_BUNDLE/Contents/"
 
 # Generate and copy app icon
-echo "  Generating app icon..."
-swift "$PROJECT_DIR/gen_icon.swift" "$PROJECT_DIR/Resources"
+ echo "  Generating app icon..."
+ if [ -f "$PROJECT_DIR/Resources/deepseek-whale.png" ]; then
+     swift "$PROJECT_DIR/gen_icon.swift" "$PROJECT_DIR/Resources/deepseek-whale.png" "$PROJECT_DIR/Resources"
+ else
+     swift "$PROJECT_DIR/gen_icon.swift" "$PROJECT_DIR/Resources"
+ fi
 if [ -f "$PROJECT_DIR/Resources/app.icns" ]; then
     cp "$PROJECT_DIR/Resources/app.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
     echo "  App icon copied."
