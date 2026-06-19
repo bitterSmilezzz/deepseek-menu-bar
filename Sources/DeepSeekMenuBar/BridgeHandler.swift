@@ -11,6 +11,7 @@ enum BridgeMethod: String {
     case deleteApiKey
     case setActiveKey
     case togglePin
+    case quitApp
 }
 
 struct BridgeRequest: Codable {
@@ -131,6 +132,8 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
             handleSetActiveKey(id: id, requestId: requestId, webView: webView)
         case .togglePin:
             handleTogglePin(requestId: requestId, webView: webView)
+        case .quitApp:
+            handleQuitApp(requestId: requestId, webView: webView)
         }
     }
 
@@ -268,6 +271,13 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
     private func handleTogglePin(requestId: String?, webView: WKWebView?) {
         popoverController?.togglePin()
         sendResult(requestId: requestId, webView: webView, data: ["success": true])
+    }
+
+    private func handleQuitApp(requestId: String?, webView: WKWebView?) {
+        sendResult(requestId: requestId, webView: webView, data: ["success": true])
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            NSApplication.shared.terminate(nil)
+        }
     }
 
     private func getActiveKey(from keys: [StoredKey]) -> StoredKey? {

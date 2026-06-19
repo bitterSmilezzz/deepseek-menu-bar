@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAppStore } from '../stores/appStore'
 import type { NativeMethod } from '../hooks/useBridge'
+import { quitNativeApp } from '../hooks/useBridge'
 import type { Page } from '../types'
 
 interface SettingsProps {
@@ -147,6 +148,14 @@ export default function Settings({ onNavigate, callNative }: SettingsProps) {
           <button onClick={() => onNavigate('news')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>最新资讯</button>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>·</span>
           <button onClick={() => window.location.reload()} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>刷新</button>
+          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>·</span>
+          <button
+            onClick={quitNativeApp}
+            className="text-xs transition-all duration-200"
+            style={{ color: '#ef4444' }}
+          >
+            退出
+          </button>
         </div>
       </div>
     </div>

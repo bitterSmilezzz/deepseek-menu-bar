@@ -44,6 +44,14 @@ mkdir -p "$APP_BUNDLE/Contents/Resources"
 cp "$EXECUTABLE_PATH" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 cp "$PROJECT_DIR/Resources/Info.plist" "$APP_BUNDLE/Contents/"
 
+# Generate and copy app icon
+echo "  Generating app icon..."
+swift "$PROJECT_DIR/gen_icon.swift" "$PROJECT_DIR/Resources"
+if [ -f "$PROJECT_DIR/Resources/app.icns" ]; then
+    cp "$PROJECT_DIR/Resources/app.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+    echo "  App icon copied."
+fi
+
 # Copy WebUI dist if exists
 if [ -d "$PROJECT_DIR/WebUI/dist" ]; then
     cp -r "$PROJECT_DIR/WebUI/dist" "$APP_BUNDLE/Contents/Resources/dist"

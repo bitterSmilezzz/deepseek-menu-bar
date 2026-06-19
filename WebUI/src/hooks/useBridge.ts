@@ -1,5 +1,5 @@
 export type NativeMethod = 'getBalance' | 'getUsage' | 'getTools' | 'searchNews' |
-  'getApiKeys' | 'saveApiKey' | 'deleteApiKey' | 'setActiveKey' | 'togglePin'
+  'getApiKeys' | 'saveApiKey' | 'deleteApiKey' | 'setActiveKey' | 'togglePin' | 'quitApp'
 
 const BRIDGE_TIMEOUT = 10000
 
@@ -50,6 +50,16 @@ export function useBridge() {
   return { callNative, isNative }
 }
 
+export function quitNativeApp() {
+  try {
+    ;(window as any).webkit?.messageHandlers?.bridge?.postMessage({
+      method: 'quitApp',
+      params: {},
+      request_id: 'quit_' + Date.now(),
+    })
+  } catch {}
+}
+
 async function handleMock(method: NativeMethod, params?: any) {
   await new Promise(r => setTimeout(r, 300))
 
@@ -86,6 +96,8 @@ async function handleMock(method: NativeMethod, params?: any) {
       return { success: true }
     case 'togglePin':
       return { pinned: true }
+    case 'quitApp':
+      return true
     default:
       return null
   }
