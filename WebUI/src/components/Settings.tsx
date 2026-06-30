@@ -143,11 +143,11 @@ export default function Settings({ onNavigate, callNative }: SettingsProps) {
 
       <div className="border-t pt-3" style={{ borderColor: 'var(--divider)' }}>
         <div className="flex items-center justify-center gap-4">
-          <button onClick={() => onNavigate('tools')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>工具列表</button>
+          <button onClick={() => onNavigate('stats')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>用量统计</button>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>·</span>
-          <button onClick={() => onNavigate('news')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>最新资讯</button>
+          <button onClick={() => onNavigate('pricing')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>模型定价</button>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>·</span>
-          <button onClick={() => window.location.reload()} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>刷新</button>
+          <button onClick={() => onNavigate('proxy')} className="text-xs transition-all duration-200" style={{ color: 'var(--btn-text)' }}>代理控制</button>
           <span className="text-xs" style={{ color: 'var(--text-muted)' }}>·</span>
           <button
             onClick={quitNativeApp}

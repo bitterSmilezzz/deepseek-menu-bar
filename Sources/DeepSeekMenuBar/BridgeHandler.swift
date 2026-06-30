@@ -12,6 +12,16 @@ enum BridgeMethod: String {
     case setActiveKey
     case togglePin
     case quitApp
+    case toggleWindow
+    case startProxy
+    case stopProxy
+    case getProxyStatus
+    case getUsageRecords
+    case getTodayStats
+    case getRecentStats
+    case getCostSummary
+    case getAllPrices
+    case getHistory
 }
 
 struct BridgeRequest: Codable {
@@ -134,6 +144,26 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
             handleTogglePin(requestId: requestId, webView: webView)
         case .quitApp:
             handleQuitApp(requestId: requestId, webView: webView)
+        case .toggleWindow:
+            handleToggleWindow(requestId: requestId, webView: webView)
+        case .startProxy:
+            handleStartProxy(requestId: requestId, webView: webView)
+        case .stopProxy:
+            handleStopProxy(requestId: requestId, webView: webView)
+        case .getProxyStatus:
+            handleGetProxyStatus(requestId: requestId, webView: webView)
+        case .getUsageRecords:
+            handleGetUsageRecords(requestId: requestId, webView: webView)
+        case .getTodayStats:
+            handleGetTodayStats(requestId: requestId, webView: webView)
+        case .getRecentStats:
+            handleGetRecentStats(requestId: requestId, webView: webView)
+        case .getCostSummary:
+            handleGetCostSummary(requestId: requestId, webView: webView)
+        case .getAllPrices:
+            handleGetAllPrices(requestId: requestId, webView: webView)
+        case .getHistory:
+            handleGetHistory(requestId: requestId, webView: webView)
         }
     }
 
@@ -278,6 +308,145 @@ class BridgeHandler: NSObject, WKScriptMessageHandler {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             NSApplication.shared.terminate(nil)
         }
+    }
+
+    private func handleToggleWindow(requestId: String?, webView: WKWebView?) {
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: NSNotification.Name("ToggleWindow"), object: nil)
+        }
+        sendResult(requestId: requestId, webView: webView, data: ["success": true])
+    }
+
+    private func handleStartProxy(requestId: String?, webView: WKWebView?) {
+        do {
+            try ProxyServer.shared.start()
+            sendResult(requestId: requestId, webView: webView, data: ["port": Int(ProxyServer.shared.port)])
+        } catch {
+            sendError(requestId: requestId, webView: webView, error: error.localizedDescription)
+        }
+    }
+
+    private func handleStopProxy(requestId: String?, webView: WKWebView?) {
+        ProxyServer.shared.stop()
+        sendResult(requestId: requestId, webView: webView, data: ["success": true])
+    }
+
+    private func handleGetProxyStatus(requestId: String?, webView: WKWebView?) {
+        let status = ProxyServer.shared.status()
+        sendResult(requestId: requestId, webView: webView, data: [
+            "running": status.running,
+            "port": Int(status.port),
+            "caInstalled": MITMEngine.shared.caCertificateExists
+        ])
+    }
+
+    private func handleGetUsageRecords(requestId: String?, webView: WKWebView?) {
+        let stats = UsageDatabase.shared.todayStats()
+        sendResult(requestId: requestId, webView: webView, data: [
+            "date": stats.date,
+            "totalRequests": stats.totalRequests,
+            "totalInputTokens": stats.totalInputTokens,
+            "totalOutputTokens": stats.totalOutputTokens,
+            "totalCacheHitTokens": stats.totalCacheHitTokens,
+            "totalCostUSD": stats.totalCostUSD,
+            "totalCostRMB": stats.totalCostRMB,
+            "modelBreakdown": stats.modelBreakdown.mapValues { [
+                "requests": $0.requests,
+                "inputTokens": $0.inputTokens,
+                "outputTokens": $0.outputTokens,
+                "cacheHitTokens": $0.cacheHitTokens,
+                "costUSD": $0.costUSD,
+                "costRMB": $0.costRMB
+            ] }
+        ])
+    }
+
+    private func handleGetTodayStats(requestId: String?, webView: WKWebView?) {
+        let stats = UsageDatabase.shared.todayStats()
+        sendResult(requestId: requestId, webView: webView, data: [
+            "date": stats.date,
+            "totalRequests": stats.totalRequests,
+            "totalInputTokens": stats.totalInputTokens,
+            "totalOutputTokens": stats.totalOutputTokens,
+            "totalCacheHitTokens": stats.totalCacheHitTokens,
+            "totalCostUSD": stats.totalCostUSD,
+            "totalCostRMB": stats.totalCostRMB,
+            "modelBreakdown": stats.modelBreakdown.mapValues { [
+                "requests": $0.requests,
+                "inputTokens": $0.inputTokens,
+                "outputTokens": $0.outputTokens,
+                "cacheHitTokens": $0.cacheHitTokens,
+                "costUSD": $0.costUSD,
+                "costRMB": $0.costRMB
+            ] }
+        ])
+    }
+
+    private func handleGetRecentStats(requestId: String?, webView: WKWebView?) {
+        let stats = UsageDatabase.shared.recentStats(days: 7)
+        let data = stats.map { s -> [String: Any] in
+            [
+                "date": s.date,
+                "totalRequests": s.totalRequests,
+                "totalInputTokens": s.totalInputTokens,
+                "totalOutputTokens": s.totalOutputTokens,
+                "totalCacheHitTokens": s.totalCacheHitTokens,
+                "totalCostUSD": s.totalCostUSD,
+                "totalCostRMB": s.totalCostRMB,
+                "modelBreakdown": [:] as [String: Any]
+            ]
+        }
+        sendResult(requestId: requestId, webView: webView, data: ["stats": data])
+    }
+
+    private func handleGetCostSummary(requestId: String?, webView: WKWebView?) {
+        let summary = UsageDatabase.shared.costSummary(days: 7)
+        sendResult(requestId: requestId, webView: webView, data: [
+            "totalCostUSD": summary.totalCostUSD,
+            "totalCostRMB": summary.totalCostRMB,
+            "totalTokens": summary.totalTokens,
+            "totalRequests": summary.totalRequests
+        ])
+    }
+
+    private func handleGetAllPrices(requestId: String?, webView: WKWebView?) {
+        let models = ModelPricing.shared.allModels()
+        var pricesByProvider: [String: [String: [String: Any]]] = [:]
+        for entry in models {
+            var priceDict: [String: Any] = [
+                "input": entry.price.input,
+                "output": entry.price.output
+            ]
+            if let cacheHit = entry.price.cacheHit {
+                priceDict["cacheHit"] = cacheHit
+            }
+            if pricesByProvider[entry.provider] == nil {
+                pricesByProvider[entry.provider] = [:]
+            }
+            pricesByProvider[entry.provider]?[entry.model] = priceDict
+        }
+        sendResult(requestId: requestId, webView: webView, data: ["prices": pricesByProvider])
+    }
+
+    private func handleGetHistory(requestId: String?, webView: WKWebView?) {
+        let records = UsageDatabase.shared.allHistory(limit: 200)
+        let data = records.map { r -> [String: Any] in
+            [
+                "id": r.id,
+                "timestamp": r.timestamp,
+                "tool": r.tool,
+                "provider": r.provider,
+                "model": r.model,
+                "requestTokens": r.requestTokens,
+                "responseTokens": r.responseTokens,
+                "cacheHitTokens": r.cacheHitTokens,
+                "cacheMissTokens": r.cacheMissTokens,
+                "costUSD": r.costUSD,
+                "costRMB": r.costRMB,
+                "endpoint": r.endpoint
+            ]
+        }
+        sendResult(requestId: requestId, webView: webView, data: ["records": data])
     }
 
     private func getActiveKey(from keys: [StoredKey]) -> StoredKey? {

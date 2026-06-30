@@ -37,10 +37,74 @@ export interface NewsItem {
   isNew?: boolean
 }
 
-export type Page = 'dashboard' | 'addkey' | 'tools' | 'news' | 'settings'
+export type Page = 'dashboard' | 'proxy' | 'stats' | 'pricing' | 'history' | 'addkey' | 'settings'
+
+export interface UsageRecord {
+  id: string
+  timestamp: number
+  tool: string
+  provider: string
+  model: string
+  requestTokens: number
+  responseTokens: number
+  cacheHitTokens: number
+  cacheMissTokens: number
+  costUSD: number
+  costRMB: number
+  endpoint: string
+}
+
+export interface ModelStat {
+  requests: number
+  inputTokens: number
+  outputTokens: number
+  cacheHitTokens: number
+  costUSD: number
+  costRMB: number
+}
+
+export interface DailyStats {
+  date: string
+  totalRequests: number
+  totalInputTokens: number
+  totalOutputTokens: number
+  totalCacheHitTokens: number
+  totalCostUSD: number
+  totalCostRMB: number
+  modelBreakdown: Record<string, ModelStat>
+}
+
+export interface CostSummary {
+  totalCostUSD: number
+  totalCostRMB: number
+  totalTokens: number
+  totalRequests: number
+}
+
+export interface ModelPrice {
+  input: number
+  output: number
+  cacheHit?: number
+}
+
+export type ProviderPrices = Record<string, Record<string, ModelPrice>>
+
+export interface ProxyStatus {
+  running: boolean
+  port: number
+  caInstalled: boolean
+}
 
 export interface BridgeResponse<T = any> {
   success: boolean
   data?: T
   error?: string
+}
+
+export interface DailyTrendPoint {
+  date: string
+  tokens: number
+  costUSD: number
+  costRMB: number
+  requests: number
 }

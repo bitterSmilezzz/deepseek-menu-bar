@@ -25,11 +25,8 @@ class StatusBarController: NSObject {
 
     private func setupRightClickMonitor() {
         NSEvent.addLocalMonitorForEvents(matching: .rightMouseUp) { [weak self] event in
-            guard let self = self,
-                  let button = self.statusItem.button,
-                  event.window == button.window else {
-                return event
-            }
+            guard let self = self, let button = self.statusItem.button,
+                  event.window == button.window else { return event }
             let loc = button.convert(event.locationInWindow, from: nil)
             if button.bounds.contains(loc) {
                 self.showContextMenu(at: button)
@@ -42,6 +39,13 @@ class StatusBarController: NSObject {
     private func showContextMenu(at view: NSView) {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "关于 DeepSeek 工具箱", action: #selector(showAbout), keyEquivalent: ""))
+
+        let running = ProxyServer.shared.isRunning
+        let proxyTitle = running ? "停止代理" : "启动代理"
+        let proxyAction = running ? #selector(stopProxy) : #selector(startProxy)
+        menu.addItem(NSMenuItem(title: proxyTitle, action: proxyAction, keyEquivalent: ""))
+
+        menu.addItem(NSMenuItem(title: "打开窗口", action: #selector(openWindow), keyEquivalent: "w"))
         menu.addItem(NSMenuItem.separator())
         let quitItem = NSMenuItem(title: "退出 DeepSeek 工具箱", action: #selector(quitApp), keyEquivalent: "q")
         quitItem.target = self
@@ -52,41 +56,45 @@ class StatusBarController: NSObject {
     @objc private func showAbout() {
         let alert = NSAlert()
         alert.messageText = "DeepSeek 工具箱"
-        alert.informativeText = "版本 1.0.0\nmacOS 菜单栏 DeepSeek API 管理工具"
+        alert.informativeText = "AI 用量追踪器 v2.0\n本地 HTTP 代理 · Token 统计 · 实时计费"
         alert.alertStyle = .informational
         alert.runModal()
+    }
+
+    @objc private func startProxy() {
+        try? ProxyServer.shared.start()
+    }
+
+    @objc private func stopProxy() {
+        ProxyServer.shared.stop()
+    }
+
+    @objc private func openWindow() {
+        NotificationCenter.default.post(name: NSNotification.Name("ToggleWindow"), object: nil)
     }
 
     private func createIcon() -> NSImage {
         let size = NSSize(width: 20, height: 16)
         let image = NSImage(size: size)
-
         image.lockFocus()
-
         let rect = NSRect(x: 0, y: 0, width: 20, height: 16)
         let path = NSBezierPath(roundedRect: rect, xRadius: 4, yRadius: 4)
-
         let gradient = NSGradient(
             starting: NSColor(red: 0.23, green: 0.51, blue: 0.96, alpha: 1.0),
-            ending: NSColor(red: 0.55, green: 0.34, blue: 0.97, alpha: 1.0)
-        )
+            ending: NSColor(red: 0.55, green: 0.34, blue: 0.97, alpha: 1.0))
         gradient?.draw(in: path, angle: 135)
 
-        let text = "D" as NSString
+        let running = ProxyServer.shared.isRunning
+        let indicator = running ? "●" : "D"
+        let text = indicator as NSString
         let attrs: [NSAttributedString.Key: Any] = [
             .font: NSFont.boldSystemFont(ofSize: 11),
-            .foregroundColor: NSColor.white
+            .foregroundColor: running ? NSColor(red: 0.1, green: 0.8, blue: 0.5, alpha: 1.0) : NSColor.white
         ]
         let textSize = text.size(withAttributes: attrs)
-        let textPoint = NSPoint(
-            x: (size.width - textSize.width) / 2,
-            y: (size.height - textSize.height) / 2 - 0.5
-        )
-        text.draw(at: textPoint, withAttributes: attrs)
-
+        text.draw(at: NSPoint(x: (size.width - textSize.width) / 2, y: (size.height - textSize.height) / 2 - 0.5), withAttributes: attrs)
         image.unlockFocus()
         image.isTemplate = false
-
         return image
     }
 
@@ -99,17 +107,15 @@ class StatusBarController: NSObject {
 
     @objc private func togglePopover() {
         guard let button = statusItem.button else { return }
-
         if popoverController.isShown {
-            if !popoverController.isCurrentlyPinned {
-                popoverController.close()
-            }
+            if !popoverController.isCurrentlyPinned { popoverController.close() }
         } else {
             popoverController.show(relativeTo: button.bounds, of: button)
         }
     }
 
     @objc private func quitApp() {
+        ProxyServer.shared.stop()
         NSApplication.shared.terminate(nil)
     }
 }
